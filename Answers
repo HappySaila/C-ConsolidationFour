@@ -1,0 +1,16 @@
+WLSGRA012
+
+Question 1
+Unique pointers can only point at one object reference. In the case of a cyclic graph, we want many pointers to point at a node object reference. For this case, a unique pointer will not work. We will have to use shared pointers to allow multiple pointer to point at one node.
+
+Question 2
+
+Before
+std::vector<std::shared_ptr<Node>> neighbours;
+
+After
+std::vector<std::weak_ptr<Node>> neighbours;
+
+In Task 2 we were using shared pointer. Shared pointers have reference counters attach to them to keep track of the objects they reference. I this case we have cyclic dependancies. These objects will not release their resources. Eg "Graph" points to nodes "A" "B" "C", (This gives each node a reference counter of 1) and nodes "A" "B" "C" reference each other (This gives each node a reference counter of 2). When we delete the "Graph", it removes its pointer on the nodes. The nodes will all still have a reference from each other node. Therefore the objects still think they are in use and are not deleted. This results in a memory leak.
+
+In Task 3 we used weak pointers. Weak pointers do not keep a reference counter. So when we delete the "Graph" object, then each node sees that a reference has been released from it. Therefore it will call its deconstructor and get deleted resulting in no memory leak. 
